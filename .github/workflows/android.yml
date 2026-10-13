@@ -1,0 +1,72 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build APK debug
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Siapkan JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Siapkan Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Siapkan Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Terima lisensi SDK
+        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
+
+      - name: Pastikan platform & build-tools ada
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Build
+        run: |
+          chmod +x gradlew 2>/dev/null || true
+          if ./gradlew --version > /dev/null 2>&1; then
+            echo "::notice::wrapper ./gradlew berfungsi"
+            ./gradlew assembleDebug --no-daemon
+          else
+            echo "::warning::wrapper tidak jalan, memakai Gradle dari action"
+            gradle assembleDebug --no-daemon
+          fi
+
+      - name: Tampilkan APK yang dihasilkan
+        run: ls -lh app/build/outputs/apk/debug/
+
+      - name: Unggah APK sebagai artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: korean-quiz-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+
+      - name: Buat Release (hanya saat push tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            app/build/outputs/apk/debug/*.apk \
+            --title "Korean Quiz ${GITHUB_REF_NAME}" \
+            --generate-notes
