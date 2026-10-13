@@ -10,7 +10,7 @@
    menerima versi baru.
    ========================================================================= */
 
-const CACHE = "kq-dsh-v1";
+const CACHE = "kq-dsh-v2";
 
 const ASSETS = [
   "./",

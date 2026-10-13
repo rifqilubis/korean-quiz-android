@@ -4,7 +4,7 @@ Aplikasi Android untuk kuis kosakata Korea. Ini versi **native** dari
 [Korean Quiz — DeepSeek Harness version](https://github.com/rifqilubis/korean-quiz-deepseek-harness-version):
 kuis web yang sudah teruji dibungkus jadi APK Android, seluruh isinya dibundel di dalam aplikasi.
 
-**252 kata · 4 pilihan · 1 jawaban benar · 100% offline · tanpa satu pun izin**
+**452 kata · 4 pilihan · 1 jawaban benar · 100% offline · tanpa satu pun izin**
 
 ## Unduh & pasang
 
