@@ -43,17 +43,19 @@ class MainActivity : AppCompatActivity() {
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
             .build()
 
+        // Dipanggil sebagai setter eksplisit: sebagian WebSettings hanya punya
+        // setter tanpa getter, sehingga sintaks properti Kotlin tidak berlaku.
         with(webView.settings) {
-            javaScriptEnabled = true
-            domStorageEnabled = true            // localStorage: rekor & tema
-            allowFileAccess = false
-            allowContentAccess = false
-            builtInZoomControls = false
-            displayZoomControls = false
-            supportZoom = false
+            setJavaScriptEnabled(true)
+            setDomStorageEnabled(true)          // localStorage: rekor & tema
+            setAllowFileAccess(false)
+            setAllowContentAccess(false)
+            setBuiltInZoomControls(false)
+            setDisplayZoomControls(false)
+            setSupportZoom(false)
             setSupportMultipleWindows(false)
-            mediaPlaybackRequiresUserGesture = false
-            cacheMode = WebSettings.LOAD_DEFAULT
+            setMediaPlaybackRequiresUserGesture(false)
+            setCacheMode(WebSettings.LOAD_DEFAULT)
         }
 
         webView.addJavascriptInterface(TtsBridge(), "AndroidTTS")
