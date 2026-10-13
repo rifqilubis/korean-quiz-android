@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Siapkan JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -31,14 +31,30 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Siapkan Android SDK
-        uses: android-actions/setup-android@v3
+      # Runner ubuntu-latest sudah menyertakan Android SDK beserta lisensi yang
+      # sudah diterima. Aksi android-actions/setup-android tidak dipakai karena
+      # kini gagal: ia mencoba memasang paket "tools" yang sudah dihapus dari
+      # repositori SDK ("Failed to find package 'tools'").
+      - name: Info Android SDK
+        run: |
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          echo "SDK=$SDK"
+          echo "platforms:"; ls -1 "$SDK/platforms" 2>/dev/null || true
+          echo "build-tools:"; ls -1 "$SDK/build-tools" 2>/dev/null || true
 
-      - name: Terima lisensi SDK
-        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
-
-      - name: Pastikan platform & build-tools ada
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+      - name: Pastikan platform android-34 (best effort)
+        run: |
+          SDK="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          MANAGER=$(command -v sdkmanager || true)
+          if [ -z "$MANAGER" ]; then
+            MANAGER=$(ls -1 "$SDK"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -n 1)
+          fi
+          if [ -n "$MANAGER" ]; then
+            yes | "$MANAGER" --licenses > /dev/null 2>&1 || true
+            "$MANAGER" "platforms;android-34" "build-tools;34.0.0" || true
+          else
+            echo "sdkmanager tidak ditemukan — AGP akan memakai SDK yang sudah ada"
+          fi
 
       - name: Build
         run: |
