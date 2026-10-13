@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Sama dengan --bg dan --accent di css/style.css -->
+    <color name="latar">#FF08080F</color>
+    <color name="aksen">#FF5B6CFF</color>
+</resources>

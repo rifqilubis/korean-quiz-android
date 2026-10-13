@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#08080f">
+<link rel="manifest" href="manifest.json">
+<title>한국어 Quiz — Tebak Arti Kosakata Korea</title>
+<meta name="description" content="Kuis kosakata Korea: satu kata Korea, empat pilihan jawaban, hanya satu yang benar.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="한국어 Quiz">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%236c5cf6'/%3E%3Ctext x='32' y='45' font-size='34' font-family='sans-serif' text-anchor='middle' fill='white'%3E%ED%95%9C%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= HEADER ================= -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-ko">한국어</span>
+      <span class="brand-quiz">Quiz</span>
+    </div>
+
+    <div class="topbar-right">
+      <span class="mode-label" id="modeLabel">Kosakata Korea → Bahasa Indonesia</span>
+
+      <button class="icon-btn icon-btn--text" id="langBtn" type="button" title="Ganti bahasa antarmuka / Switch interface language">
+        <span id="langBtnText">ID</span>
+      </button>
+
+      <button class="icon-btn" id="themeBtn" type="button" title="Ganti tema terang/gelap">
+        <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <g stroke-linecap="round">
+            <path d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.8 1.8M16.8 16.8l1.8 1.8M18.6 5.4l-1.8 1.8M7.2 16.8l-1.8 1.8"></path>
+          </g>
+        </svg>
+        <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= START SCREEN ================= -->
+  <section class="screen" id="screen-start">
+    <div class="card start-card">
+      <h1 class="start-title" id="startTitle">Tebak arti kosakata Korea</h1>
+      <p class="start-sub" id="startSub">Satu kata muncul, pilih satu jawaban yang benar dari empat pilihan.</p>
+
+      <div class="field">
+        <span class="field-label" id="labelDirection">Arah terjemahan</span>
+        <div class="segmented" id="directionGroup" role="radiogroup" aria-labelledby="labelDirection">
+          <button class="seg is-active" type="button" role="radio" aria-checked="true" data-direction="ko-id">Korea → Indonesia</button>
+          <button class="seg" type="button" role="radio" aria-checked="false" data-direction="id-ko">Indonesia → Korea</button>
+          <button class="seg" type="button" role="radio" aria-checked="false" data-direction="mixed">Campuran</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field-label" id="labelCount">Jumlah soal</span>
+        <div class="chips" id="countGroup" role="radiogroup" aria-labelledby="labelCount">
+          <button class="chip" type="button" role="radio" aria-checked="false" data-count="10">10</button>
+          <button class="chip is-active" type="button" role="radio" aria-checked="true" data-count="20">20</button>
+          <button class="chip" type="button" role="radio" aria-checked="false" data-count="50">50</button>
+          <button class="chip" type="button" role="radio" aria-checked="false" data-count="100">100</button>
+          <button class="chip" type="button" role="radio" aria-checked="false" data-count="0" id="chipAll">Semua</button>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="startBtn" type="button">Mulai kuis</button>
+
+      <p class="install-hint" id="installHint">Buka menu browser → “Tambahkan ke layar utama” supaya bisa dibuka offline.</p>
+      <p class="best-line" id="bestLine"></p>
+      <p class="hint" id="hintKeys">Tips: tekan 1-4 atau A-D untuk menjawab, Enter untuk lanjut.</p>
+    </div>
+  </section>
+
+  <!-- ================= QUIZ SCREEN ================= -->
+  <section class="screen" id="screen-quiz" hidden>
+    <div class="statusbar">
+      <span class="status-count" id="questionCounter">Soal 1 / 20</span>
+      <span class="score-pill" id="scorePill">Benar: 0</span>
+    </div>
+
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="card quiz-card" id="quizCard">
+      <div class="prompt-wrap">
+        <div class="prompt" id="promptWord">침대</div>
+        <div class="roman" id="promptRoman">chimdae</div>
+      </div>
+
+      <div class="ask-row">
+        <span class="ask" id="askText">APA ARTI KATA INI?</span>
+        <button class="speak-btn" id="speakBtn" type="button" title="Dengarkan pelafalan" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.2L12 5.6v12.8L7.2 14.5H4z"></path><path d="M15.4 8.4a5 5 0 0 1 0 7.2M18 5.8a8.6 8.6 0 0 1 0 12.4" fill="none" stroke-linecap="round"></path></svg>
+        </button>
+      </div>
+
+      <div class="options" id="options"></div>
+
+      <div class="quiz-footer">
+        <span class="feedback" id="feedback" role="status" aria-live="polite"></span>
+        <button class="btn btn-primary btn-next" id="nextBtn" type="button" hidden>Soal berikutnya</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RESULT SCREEN ================= -->
+  <section class="screen" id="screen-result" hidden>
+    <div class="card result-card">
+      <div class="ring">
+        <svg class="ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+          <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="ring-text">
+          <span class="ring-percent" id="resultPercent">0%</span>
+          <small class="ring-fraction" id="resultFraction">0 / 0</small>
+        </div>
+      </div>
+
+      <h2 class="result-headline" id="resultHeadline">Hasil kuis</h2>
+      <p class="result-msg" id="resultMsg"></p>
+      <p class="best-badge" id="newBest" hidden>🏆 Rekor baru!</p>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-val stat-val--ok" id="statCorrect">0</span>
+          <span class="stat-label" id="statCorrectLabel">Benar</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val stat-val--bad" id="statWrong">0</span>
+          <span class="stat-label" id="statWrongLabel">Salah</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val" id="statTime">0:00</span>
+          <span class="stat-label" id="statTimeLabel">Waktu</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="againBtn" type="button">Main lagi</button>
+        <button class="btn btn-ghost" id="settingsBtn" type="button">Ganti pengaturan</button>
+      </div>
+    </div>
+
+    <div class="card review-card" id="reviewCard" hidden>
+      <h3 class="review-title" id="reviewTitle">Pembahasan jawaban salah</h3>
+      <ul class="review-list" id="reviewList"></ul>
+    </div>
+  </section>
+
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
